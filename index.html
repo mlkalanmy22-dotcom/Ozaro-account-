@@ -1,326 +1,179 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ozaro | Nixon Siberian Files</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Ozaro | Nixon Cloud</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* نظام "سيبيريا": خلفية غامقة مائلة للأزرق مع لمسات وردية */
             --bg: #0a0e14;
-            --container-bg: rgba(26, 31, 39, 0.85);
-            --primary: #c3427f; /* وردي غامق للسيبيريا */
-            --primary-light: #f7559e;
-            --accent: #00d4ff; /* أزرق نيون */
-            --text-main: #e0e0e0;
-            --text-sub: #888;
-            --shadow: 0 10px 30px rgba(0,0,0,0.4);
-            --transition: 0.3s ease;
-            --blur: 20px;
+            --glass: rgba(26, 31, 39, 0.7);
+            --primary: #c3427f;
+            --accent: #00d4ff;
+            --text: #e0e0e0;
+            --blur: 15px;
         }
 
-        /* وضع النهار (إذا احتجته لاحقاً، لكن السيبيريا تبان أفضل في الغامق) */
         .light-mode {
-            --bg: #f4f6f8;
-            --container-bg: rgba(255, 255, 255, 0.9);
+            --bg: #eef2f7;
+            --glass: rgba(255, 255, 255, 0.8);
             --primary: #7e1e4f;
-            --primary-light: #c3427f;
-            --accent: #0093b3;
-            --text-main: #333;
-            --text-sub: #666;
-            --shadow: 0 5px 15px rgba(0,0,0,0.1);
+            --accent: #008eb3;
+            --text: #222;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(at 10% 10%, rgba(195, 66, 127, 0.15) 0px, transparent 50%),
-                radial-gradient(at 90% 90%, rgba(0, 212, 255, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 50%, rgba(10, 14, 20, 0.8) 0px, transparent 80%);
-            /* خلفية ضبابية كما طلبت */
-            background-attachment: fixed;
-            background-size: cover;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 14, 20, 0.3);
-            backdrop-filter: blur(var(--blur)); /* الضبابية للحماية من أذى العين */
-            z-index: -1;
-        }
-
-        .main-container {
-            background: var(--container-bg);
-            width: 100%;
-            max-width: 900px;
-            min-height: 80vh;
-            border-radius: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            flex-direction: column;
+            min-height: 100vh;
+            transition: 0.5s;
             overflow: hidden;
+            background-image: radial-gradient(circle at 10% 20%, rgba(195, 66, 127, 0.1) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 40%);
+        }
+
+        /* الطبقة الضبابية لمنع إجهاد العين */
+        body::after {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            backdrop-filter: blur(var(--blur)); z-index: -1;
+        }
+
+        /* الشريط العلوي */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; background: var(--glass);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .user-profile img { 
+            width: 50px; height: 50px; border-radius: 50%; 
+            border: 2px solid var(--accent); object-fit: cover;
+        }
+        .user-name-box { display: flex; flex-direction: column; }
+        .user-name-box b { font-size: 16px; color: var(--accent); }
+        .insta-btn { color: var(--primary); text-decoration: none; font-size: 18px; transition: 0.3s; }
+        .insta-btn:hover { color: #ff00ff; transform: scale(1.2); }
+
+        .top-nav { display: flex; align-items: center; gap: 20px; }
+        .nav-item { cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.3s; }
+        .nav-item:hover { color: var(--accent); }
+
+        /* الأيقونة العائمة (+) والأنيميشن */
+        .fab-container { position: fixed; bottom: 30px; left: 30px; z-index: 1000; }
+        .main-fab {
+            width: 65px; height: 65px; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, var(--accent));
+            display: flex; justify-content: center; align-items: center;
+            font-size: 24px; color: #000; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,212,255,0.4);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .fab-container.active .main-fab { transform: rotate(45deg); }
+
+        .sub-options {
+            position: absolute; bottom: 80px; left: 5px;
+            display: flex; flex-direction: column; gap: 15px;
+            pointer-events: none; opacity: 0; transform: translateY(20px);
+            transition: 0.4s;
+        }
+        .fab-container.active .sub-options { pointer-events: auto; opacity: 1; transform: translateY(0); }
+
+        .opt-btn {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: var(--glass); border: 1px solid var(--accent);
+            display: flex; justify-content: center; align-items: center;
+            color: var(--accent); cursor: pointer; transition: 0.3s;
             position: relative;
         }
+        .opt-btn:hover { background: var(--accent); color: #000; }
+        .opt-btn span { position: absolute; right: -70px; font-size: 12px; font-weight: bold; color: var(--text); }
 
-        /* الجزء العلوي: الشريط والشخصية */
-        .top-banner {
-            background-color: #0d121b;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .profile-pic-container {
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 10px rgba(0,212,255,0.3);
-            transition: var(--transition);
-        }
-        .profile-pic-container:hover { transform: scale(1.1) rotate(5deg); }
-
-        .profile-pic-container img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-        }
-
-        .name-and-insta {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .user-name {
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: lowercase; /* لجعل اسمك ozaro-nixon بالحروف الصغيرة */
-            color: var(--accent);
-        }
-
-        .insta-link {
-            color: var(--text-sub);
-            text-decoration: none;
-            font-size: 13px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .insta-link:hover { color: var(--primary-light); }
-
-        .top-right-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .dark-mode-toggle {
-            cursor: pointer;
-            color: var(--text-sub);
-            transition: var(--transition);
-            font-size: 1.2rem;
-        }
-        .dark-mode-toggle:hover { color: var(--text-main); }
-
-        /* منطقة الملفات والمجلدات */
-        .files-area {
-            flex: 1;
-            padding: 30px;
-            position: relative;
-        }
-
-        .add-options {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            justify-content: flex-start;
-        }
-
-        .action-btn {
-            background: var(--primary);
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .action-btn:hover { background: var(--primary-light); transform: translateY(-2px); }
-        .action-btn.accent-btn { background: rgba(0, 212, 255, 0.1); color: var(--accent); border: 1px solid var(--accent); }
-        .action-btn.accent-btn:hover { background: rgba(0, 212, 255, 0.2); }
-
-        .add-section {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: flex-end; /* لجعله يمين فوق كما طلبت */
-        }
-
-        .file-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-            width: 100%;
-        }
-
-        .file-item {
-            background: #10151f;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: var(--transition);
-            border: 1px solid transparent;
-            position: relative;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            border-right: 4px solid var(--primary); /* لون افتراضي سيبيريا */
-        }
-        .file-item:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.03); }
-
-        .file-icon { font-size: 2.2rem; margin-bottom: 10px; color: var(--primary); }
-        .file-name { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; }
-        .file-size { font-size: 11px; color: var(--text-sub); }
-
-        .dots-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: var(--text-sub);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .dots-btn:hover { color: var(--accent); }
-
-        /* زر الإضافة السحري (+) يسار تحت */
-        .magic-plus {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--accent) 0%, rgba(255,255,255,0.8) 100%); /* زرقاء وبها بياض */
-            color: #0a0e14;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 5px 20px rgba(0,212,255,0.5);
-            z-index: 1000;
-        }
-        .magic-plus:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 8px 25px rgba(0,212,255,0.7); }
+        /* وضع الليل والنهار */
+        .mode-toggle { cursor: pointer; font-size: 20px; color: var(--text); }
 
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        
-        <header class="top-banner">
-            <div class="user-info">
-                <div class="profile-pic-container">
-                    <img src="https://static.wikia.nocookie.net/bleach/images/6/64/Sōsuke_Aizen_profile.png" alt="Ozaro Nixon">
-                </div>
-                <div class="name-and-insta">
-                    <span class="user-name">ozaro-nixon</span>
-                    <a href="https://www.instagram.com/ozaro.nixon" target="_blank" class="insta-link">
-                        <i class="fab fa-instagram">
-                    </a>
-                </div>
+    <header>
+        <div class="user-profile">
+            <img src="https://i.imgur.com/Gz7nEaL.png" alt="Ozaro">
+            <div class="user-name-box">
+                <b>ozaro-nixon</b>
+                <a href="https://www.instagram.com/ozaro.nixon" class="insta-btn" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
             </div>
-            
-            <div class="top-right-section">
-                <div class="dark-mode-toggle" id="darkModeToggle">
-                    <i class="fas fa-moon" id="toggleIcon">
-                </div>
-            </div>
-        </header>
-
-        <main class="files-area">
-            
-            <div class="add-section">
-                <button class="action-btn" id="addFolderBtn">
-                    <i class="fas fa-folder-plus">
-                </button>
-            </div>
-
-            <div class="file-list">
-                
-                <div class="file-item" style="border-right: 4px solid var(--primary);">
-                    <i class="dots-btn fas fa-ellipsis-v">
-                    <i class="file-icon fas fa-file-video">
-                    <span class="file-name">Nixon Siberia Intro.mp4</span>
-                    <span class="file-size">45 MB</span>
-                </div>
-
-                <div class="file-item" style="border-right: 4px solid var(--accent);">
-                    <i class="dots-btn fas fa-ellipsis-v">
-                    <i class="file-icon fas fa-music">
-                    <span class="file-name">Synthwave Siberia.mp3</span>
-                    <span class="file-size">8 MB</span>
-                </div>
-
-            </div>
-
         </div>
 
-        <div class="magic-plus">
-            <i class="fas fa-plus">
+        <div class="top-nav">
+            <div class="nav-item" onclick="addFolder()">
+                <i class="fas fa-folder-plus"></i> إضافة مجلد
+            </div>
+            <div class="mode-toggle" id="modeToggle">
+                <i class="fas fa-moon"></i>
+            </div>
         </div>
+    </header>
 
+    <div class="fab-container" id="fabContainer">
+        <div class="sub-options">
+            <div class="opt-btn" onclick="triggerFile('video/*')">
+                <i class="fas fa-video"></i><span>فيديو</span>
+            </div>
+            <div class="opt-btn" onclick="triggerFile('audio/*')">
+                <i class="fas fa-music"></i><span>موسيقى</span>
+            </div>
+            <div class="opt-btn" onclick="triggerFile('image/*')">
+                <i class="fas fa-image"></i><span>صور</span>
+            </div>
+        </div>
+        <div class="main-fab" onclick="toggleFab()">
+            <i class="fas fa-plus"></i>
+        </div>
     </div>
 
+    <input type="file" id="realInput" style="display:none">
+
     <script>
-        const body = document.body;
-        const toggleIcon = document.getElementById('toggleIcon');
-        const toggleBtn = document.getElementById('darkModeToggle');
+        // تفعيل القائمة المنبثقة للـ +
+        function toggleFab() {
+            document.getElementById('fabContainer').classList.toggle('active');
+        }
 
-        // الوضع الليلي افتراضي للسيبيريا
-        body.classList.add('dark-mode'); 
+        // اختيار الملف حسب النوع
+        function triggerFile(type) {
+            const input = document.getElementById('realInput');
+            input.accept = type;
+            input.click();
+            toggleFab();
+        }
 
-        toggleBtn.addEventListener('click', () => {
-            body.classList.toggle('light-mode');
-            if (body.classList.contains('light-mode')) {
-                toggleIcon.classList.replace('fa-moon', 'fa-sun');
+        // وضع الليل والنهار
+        const modeToggle = document.getElementById('modeToggle');
+        modeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const icon = modeToggle.querySelector('i');
+            if(document.body.classList.contains('light-mode')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
             } else {
-                toggleIcon.classList.replace('fa-sun', 'fa-moon');
+                icon.classList.replace('fa-sun', 'fa-moon');
             }
         });
+
+        // إضافة مجلد (تنبيه تجريبي حالياً)
+        function addFolder() {
+            const name = prompt("أدخل اسم المجلد الجديد:");
+            const color = prompt("أدخل لون المجلد (hex مثل #ff0000):", "#00d4ff");
+            if(name) alert("سيتم إنشاء مجلد باسم: " + name + " بلون: " + color);
+        }
     </script>
 </body>
 </html>
+
 
